@@ -8,12 +8,17 @@ const config ={
     database:'nodedb'
 }
 const mysql = require('mysql');
+
 const connection = mysql.createConnection( config );
 
-var peopleList = [];
+const { uniqueNamesGenerator, adjectives, colors, names } = require('unique-names-generator');
 
-//const insert_sql = `INSERT INTO people(name) values('Teste_People')`;
-//connection.query(insert_sql);
+const randomName = uniqueNamesGenerator({ dictionaries: [adjectives, colors, names] });
+
+
+var peopleList = [];
+const insert_sql = "INSERT INTO people(name) values('"+randomName+"')";
+
 
 connection.connect(function(err) {
     if (err) throw err;
@@ -22,20 +27,12 @@ connection.connect(function(err) {
       result.forEach(function(entry) {
         peopleList.push(entry.name);
     });
-   // console.log(peopleList);
     });
   });
-
+  connection.query(insert_sql);
 
 app.get( '/',(req,res) =>{
-   // res.send('<h1>Full Teste</h1>');
-    res.send(
-        peopleList.map(person =>{     
-            `<h1>${person.name}</h1><br>
-            `
-            //`<h1>Full Teste</h1>`//'<li>'+person+'</li>'
-            })
-        );
+   res.send("<html><body><h1>Full Cycle Rocks!</h1></body>"+peopleList+"</html>");
 });
 
 app.listen(port, ()=>{
